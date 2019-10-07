@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}资讯总览{% endblock %}
+{% block css %}
+    <style>
+        .movie_type {
+            border-radius: 50%;
+            height: 300px;
+            width: 300px;
+            display: inline-block;
+            vertical-align: top;
+            background-color: dodgerblue;
+            text-align: center;
+            line-height: 300px;
+            font-size: 24px;
+            color: white;
+        }
+        .other_type {
+            border-radius: 50%;
+            height: 300px;
+            width: 300px;
+            display: inline-block;
+            vertical-align: top;
+            background-color: cadetblue;
+            text-align: center;
+            line-height: 300px;
+            font-size: 24px;
+            color: white;
+        }
+        .content span:hover {
+            background-color: red;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h1 style="text-align: center">资讯总览</h1>
+    <br><br>
+    <div id="content" style="text-align: center">
+        <div class="row">
+            <div class="col-md-4">
+                <span class="movie_type" data-url="{{ url_for('top100') }}">
+                    猫眼电影TOP100
+                </span>
+            </div>
+            <div class="col-md-4">
+                <span class="movie_type" data-url="{{ url_for('action2019') }}">
+                    2019年动作电影
+                </span>
+            </div>
+            <div class="col-md-4">
+                <span class="movie_type" data-url="{{ url_for('comedy2019') }}">
+                    2019年喜剧电影
+                </span>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-4">
+                <span class="other_type">
+                    新闻直通车
+                </span>
+            </div>
+            <div class="col-md-4">
+                <span class="other_type">
+                    互联网资讯
+                </span>
+            </div>
+            <div class="col-md-4">
+                <span class="other_type">
+                    娱乐直通车
+                </span>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+<script>
+    $(function () {
+        $('#content').on('click', '.movie_type', function (event) {
+            location.href = $(this).data('url');
+        })
+    })
+</script>
+{% endblock %}

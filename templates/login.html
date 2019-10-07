@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录页面</title>
+    <link href="../static/css/bootstrap.min.css"/>
+    <style>
+        body {
+            background: url('../static/img/9.jpg') fixed;
+            background-size: cover;
+            padding: 0;
+            margin: 0;
+        }
+
+        .wrap {
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 99;
+        }
+
+        p.form-title {
+            font-size: 50px;
+            font-weight: 600;
+            text-align: center;
+            color: #000000;
+            margin-top: 5%;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        div.login {
+            width: 500px;
+            padding: 50px;
+            margin: 0 auto;
+        }
+
+        div.login input[type="text"], div.login input[type="password"] {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 10px 10px;
+            background: 0;
+            border: 0;
+            border-bottom: 1px solid #FFFFFF;
+            outline: 0;
+            font-style: italic;
+            font-size: 20px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            color: #FFFFFF;
+            {#outline: 0;#}
+        }
+
+        div.login button {
+            width: 100%;
+            height: 50px;
+            font-size: 20px;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-top: 16px;
+            outline: 0;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        div.login button:hover {
+            transition: background-color 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="wrap">
+                <p class="form-title">欢迎登录</p>
+                <div class="login">
+                    <input type="text" placeholder="Username" id="username" style="height: 50px;"/>
+                    <input type="password" placeholder="Password" id="password" style="height: 50px;"/>
+                    <button id="loginBtn" class="btn btn-success">登录</button>
+                    <span id="err_msg" style="color: red;font-size: 20px"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../static/js/jquery-3.3.1.min.js"></script>
+<script src="../static/js/bootstrap.min.js"></script>
+<script>
+    function login() {
+        $.ajax({
+            url: '{{ url_for('login') }}',
+            type: 'POST',
+            data: {'username': $('#username').val(), 'password': $('#password').val()},
+            success: function (data) {
+                console.log(data);
+                if (data.status) {
+                    location.href = '{{ url_for('index') }}';
+
+                } else {
+                    $('#err_msg').html(data.msg);
+                }
+            }
+        })
+    }
+
+    $(function () {
+        $('#loginBtn').on('click', function () {
+            // 执行login函数
+            login();
+        })
+    })
+</script>
+</body>
+</html>

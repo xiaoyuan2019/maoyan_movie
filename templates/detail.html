@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}电影详情页面{% endblock %}
+{% block css %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-4">
+            <div class="movie_info" style="float: left;text-align: center">
+                <div class="title">
+                    <h1 style="text-align: center">电影：{{ data.title }}</h1>
+                </div>
+                <br><br>
+                <div class="movie_img">
+                    <img src="{{ data.title_img }}" style="width: 360px;height: 400px;">
+                </div>
+                <br>
+                <div class="introduction" style="text-align: left;">
+                    <h2>影片简介</h2><br>
+                    <h4>{{ data.introduction }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="content" style="float: left;">
+                <div class="celebrity-container">
+                    <h2>导演及演员信息</h2>
+                    <br><br>
+                    <div class="director" style="text-align: center;float: left">
+                        <div class="director_img">
+                            <img src="{{ data.director_img }}"/>
+                        </div>
+                        <div class="director_name">
+                            <span>导演：{{ data.director }}</span>
+                        </div>
+                    </div>
+                    <div class="actor" style="text-align: center;float: left">
+                        <div class="actor_img">
+                            {% for item in data.actor_img | str_list %}
+                                <img src="{{ item }}"/>
+                            {% endfor %}
+                        </div>
+                        <div class="actor_name">
+                            {% for item in data.actor | str_list %}
+                                <span style="padding: 25px">演员：{{ item | truncate(6) }}</span>
+                            {% endfor %}
+                            <br>
+                            {% for item in data.actor_role | str_list %}
+                                <span style="padding: 32px">{{ item | truncate(10) }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="comment" style="clear: both">
+                    <br>
+                    <div class="comment_label">
+                        <span style="font-size: 30px">影评TOP 10</span>
+                        <span id="is_login" style="display: none">{{ session.get('is_login') }}</span>
+                        <span id="mid" style="display: none">{{ data.detail_id }}</span>
+                        <button id="sign_comment" class="btn btn-danger" style="float: right">写影评</button>
+                    </div>
+                    <div class="login_user_comment" style="display: none">
+                        <input class="user_comment" type="text" placeholder="请输入评论"/>
+                        <button class="btn btn-success" id="commentSubmit">提交</button>
+                    </div>
+                    <div class="conent" style="overflow: auto;width: 100%;height: 420px;color: blue">
+                        {% for item in data.comment | str_list %}
+                            <h4>{{ item }}</h4>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+<script>
+    function addComment(){
+        $.ajax({
+            url: '{{ url_for('add_comment') }}',
+            type: 'POST',
+            data: {'movie_comment': $('.user_comment').val(), 'mid': $('#mid').text()},
+            success: function (data) {
+                if (data == 'OK'){
+                    location.reload();
+                }
+            }
+        })
+    }
+    $(function () {
+        $('#sign_comment').on('click', function () {
+            var login_status = $('#is_login').text();
+            if (login_status == 'True'){
+                // 弹出评论框
+                $('.login_user_comment').show();
+            }else {
+                alert('你未登陆，请登陆后再评论！');
+                location.href = '{{ url_for('login') }}';
+            }
+        });
+        $('#commentSubmit').on('click', function () {
+            var tmp_content = $('.user_comment').val();  //获取评论内容
+            if (tmp_content){
+                addComment();
+            }else {
+                alert('评论框必须填写！！！');
+            }
+        })
+    })
+</script>
+{% endblock %}
