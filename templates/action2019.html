@@ -7,7 +7,16 @@
 {% block content %}
     <div class="row">
         <h1 style="text-align: center">2019年动作电影预览</h1>
-        <br><br>
+        <br>
+        <div class="col-md-12">
+            <div class="search_movie" style="margin-left: 68px;">
+                <input type="text" id="movie_name" style="height: 32px;width: 300px;" placeholder="输入电影名或主演名称模糊查询">
+                <button class="btn btn-success" id="SearchBtn">搜索一下</button>
+                <span id="err_msg" style="color: red;font-size: 18px"></span>
+            </div>
+            <br><br>
+        </div>
+        <div id="search_content" style="display: none;"></div>
         {% for movie in data %}
             <div class="col-md-2">
                 <div class="movie" style="margin-left: 15px;text-align: center">
@@ -24,6 +33,7 @@
                     </div>
                 </div>
             </div>
+            <br>
         {% endfor %}
     </div>
 <!-- 分页器-->
@@ -55,8 +65,61 @@
                 {% else %}
                     <li class="page-item disabled"><a class="page-link" href="#">下一页</a></li>
                 {% endif %}
-
             </ul>
         </nav>
     </div>
+{% endblock %}
+{% block script %}
+<script>
+    function movie_search(){
+        $.ajax({
+            url: '{{ url_for('movie_search') }}',
+            type: 'POST',
+            data: {'search_text': $('#movie_name').val()},
+            success: function (data) {
+                if (data.status){
+                    $('.movie').empty().hide();
+                    $('.paginate').hide();
+                    renderInfo(data.info);
+                    $('#search_content').show();
+                }else{
+                    $('#err_msg').html('查询失败，错误信息：'+ data.msg);
+                }
+            }
+        })
+    }
+    function renderInfo(res){
+        var str = '';
+        for (i=0;i<res.length;i++){
+            console.log(res[i].title);
+            var img = `<img src="${res[i].img}">`;
+            var title = `<h4>${res[i].title}</h4>`;
+            var score = `<span>评分：${res[i].score}</span>`;
+            var info_html = `<div class="col-md-2">\n
+                            <div style="margin-left: 15px;text-align: center;">\n
+                                    <div class="img_url_sea">\n
+                                          <img src="${res[i].img}">\n
+                                    </div>\n
+                                    <div class="info">\n
+                                        <div class="title_sea">\n
+                                           <h4>${res[i].title}</h4>\n
+                                        </div>\n
+                                        <div class="score_sea">\n
+                                            <span>评分：${res[i].score}</span>\n
+                                        </div>\n
+                                    </div>\n
+                               </div>\n
+                            </div>`;
+            str += info_html;
+        }
+        console.log(str);
+        $('#search_content').empty().html(str);
+    }
+    $(function () {
+        $('#SearchBtn').on('click', function () {
+            $('#err_msg').html('');
+            movie_search();
+        })
+    })
+</script>
 {% endblock %}

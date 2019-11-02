@@ -125,6 +125,35 @@ def comedy2019():
 	return render_template('comedy2019.html', data=comedy2019_info.items, pagination=comedy2019_info)
 	# comedy2019_info = MovieSpider('comedy2019').get_data()  # 实时爬取电影信息
 
+@app.route('/action2019/search/', methods=['GET', 'POST'])
+def movie_search():
+	msg_dict = {'status': True, 'msg': None}  # 返回信息
+	search_text = request.form.get('search_text')  # 获取前端页面要查询的内容
+	# print(search_text)
+	try:
+		result = Action2019.query.filter(Action2019.title.like('%' + search_text + '%')).all()  # 查询电影名中包含该字符串的信息
+		tmp_info = []
+		if len(result):
+			for item in result:
+				tmp_info.append(
+					{
+						'title': item.title,
+						'img': item.img,
+						'score': item.score
+					}
+				)
+			msg_dict['info'] = tmp_info
+			return jsonify(msg_dict)
+		else:
+			msg_dict['status'] = False
+			msg_dict['msg'] = '不存在匹配的电影，请确认！'
+			return jsonify(msg_dict)
+	except Exception as e:
+		msg_dict['status'] = False
+		msg_dict['msg'] = str(e)
+		return jsonify(msg_dict)
+	# return render_template('action2019.html', data=result)
+
 
 if __name__ == '__main__':
 	# 启动flask虚拟的应用服务器，来持续监听用户的请求，相当于while true:
